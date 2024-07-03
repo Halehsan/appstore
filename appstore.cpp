@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+#include <vector>
 
 class Product {
 public:
@@ -12,6 +13,39 @@ public:
 };
 
 
+
+
+class ListOfProducts {
+public:
+    void add_product(Product& product);
+    void list_of_products() ;
+
+private:
+    vector<Product> products;
+};
+
+
+
+void ListOfProducts::add_product(Product& product){
+    products.push_back(product);
+
+}
+
+
+void ListOfProducts::list_of_products(){
+    for (auto& product : products){
+
+        cout << "Brand: " << product.brand_name << endl;
+        cout << "Model: " << product.model_name << endl;
+        cout << "Size: " << product.size << endl;
+        cout << "Color: " << product.color << endl;
+        cout << "Price: " << product.price << endl;
+        cout << "Quantity: " << product.quantity << endl;
+        cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* " << endl;
+
+
+    }
+}
 class ProductStore {
 public:
 
@@ -27,6 +61,11 @@ public:
     void add_product();
     void edit_product();
     void remove_product();
+    void list_of_products() ;
+
+private:
+
+    ListOfProducts product_list;
 };
 
 void ProductStore::show_main_page() {
@@ -66,8 +105,9 @@ void Management::show_management_page() {
         cout << "1. Add Product" << endl;
         cout << "2. Edit Product" << endl;
         cout <<"3. REmove Product" << endl;
-        cout << "4. Return to Main Menu" << endl;
-        cout << "5. Exit" << endl;
+        cout << "4. List of products" << endl;
+        cout << "5. Return to Main Menu" << endl;
+        cout << "6. Exit" << endl;
         cout << "Enter your option: ";
         cin >> option;
 
@@ -84,8 +124,10 @@ void Management::show_management_page() {
                 remove_product();
                 break;
         case 4:
-                return;
+                list_of_products();
         case 5:
+                return;
+        case 6:
                 exit(0);
         
         default:
@@ -129,8 +171,16 @@ void Management::add_product(){
     cout <<  "Enter the price::" ;
     cin >> product.price;
 
+    product_list.add_product(product);
+
+
     cout << "Product added successfully" <<endl;
 
+}
+
+void Management::list_of_products() {
+
+    product_list.list_of_products();
 }
 
 void Management::edit_product(){
