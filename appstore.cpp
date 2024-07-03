@@ -19,10 +19,13 @@ class ListOfProducts {
 public:
     void add_product(Product& product);
     void list_of_products() ;
+    void edit_product(int i);
+    void remove_product(int i);
 
 private:
     vector<Product> products;
 };
+
 
 
 
@@ -33,19 +36,75 @@ void ListOfProducts::add_product(Product& product){
 
 
 void ListOfProducts::list_of_products(){
-    for (auto& product : products){
 
-        cout << "Brand: " << product.brand_name << endl;
-        cout << "Model: " << product.model_name << endl;
-        cout << "Size: " << product.size << endl;
-        cout << "Color: " << product.color << endl;
-        cout << "Price: " << product.price << endl;
-        cout << "Quantity: " << product.quantity << endl;
+    if (products.size()==0){
+
+        cout << "No products available." << endl;
+        return;
+    
+    }
+
+    for (int i =0 ; i < products.size();++i){
+
+        cout << "Product Number: " << i+1 << endl;
+        cout << "Brand: " << products[i].brand_name << endl;
+        cout << "Model: " << products[i].model_name << endl;
+        cout << "Size: " << products[i].size << endl;
+        cout << "Color: " << products[i].color << endl;
+        cout << "Price: " << products[i].price << endl;
+        cout << "Quantity: " << products[i].quantity << endl;
         cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* " << endl;
 
 
     }
 }
+
+
+
+void ListOfProducts::remove_product(int i){
+    if (i < 1 || i > products.size()) {
+
+        cout << "Invalid product number." << endl;
+        return;
+    }
+    products.erase(products.begin() + (i - 1));
+
+    cout << "Product removed successfully." << endl;
+}
+
+void ListOfProducts::edit_product(int i){
+    if (i < 1 || i > products.size()) {
+
+        cout << "Invalid product number." << endl;
+        return;
+    }
+
+    Product& product = products[i - 1];
+
+    cout << "Editing product number " << i << endl;
+
+    cout << "Enter new brand name: " << product.brand_name << endl;
+    cin.ignore();
+    getline(cin, product.brand_name);
+
+    cout << "Enter new model name: " << product.model_name << endl;
+    getline(cin, product.model_name);
+
+    cout << "Enter new size: " << product.size << endl;
+    getline(cin, product.size);
+
+    cout << "Enter new color: " << product.color << endl;
+    getline(cin, product.color);
+
+    cout << "Enter new quantity: " << product.quantity << endl;
+    cin >> product.quantity;
+
+    cout << "Enter new price: "<< product.price << endl;
+    cin >> product.price;
+
+    cout << "Product edited successfully." << endl;
+}
+
 class ProductStore {
 public:
 
@@ -184,11 +243,17 @@ void Management::list_of_products() {
 }
 
 void Management::edit_product(){
-    ///
+    int i;
+    cout << "Enter the product number to edit: ";
+    cin >> i;
+    product_list.edit_product(i);
 }
 
 void Management::remove_product(){
-    ///
+    int i;
+    cout << "Enter the product number to remove: ";
+    cin >> i;
+    product_list.remove_product(i);
 }
 
 
