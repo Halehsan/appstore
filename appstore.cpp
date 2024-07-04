@@ -1,6 +1,8 @@
 #include <iostream>
 using namespace std;
+#include <string>
 #include <vector>
+
 
 class Product {
 public:
@@ -116,6 +118,7 @@ class UserManager{
 public:
     bool sign_up(string& username, string& password);
     bool login(string& username, string& password);
+    bool change_pass(string& username, string& old_password, string& new_password);
     
 private:
     bool validate_pass(string& password);
@@ -174,6 +177,22 @@ bool UserManager::login(string& username, string& password) {
     return false;
 }
 
+bool UserManager::change_pass(string& username, string& old_password, string& new_password){
+    for (auto& user: users ){
+        if (user.username == username && user.password == old_password)
+            if (!validate_pass(new_password)){
+                cout << "Password is invalid." << endl;
+                return false;
+            }
+            user.password = new_password;
+            cout << "Password changed successfully." << endl;
+            return true;
+
+    }
+    cout << "Invalid username or old password." << endl;
+    return false;
+}
+
 class ProductStore {
 public:
 
@@ -188,11 +207,14 @@ private:
 
 class Management {
 public:
-    void show_management_page();
+    void show_management_page(UserManager& userManager, string& loggedInUser);
     void add_product();
     void edit_product();
     void remove_product();
     void list_of_products() ;
+    void settings(UserManager& userManager, string& loggedInUser);
+    void change_pass(UserManager& userManager,  string& loggedInUser);
+
 
 private:
 
@@ -226,7 +248,7 @@ void ProductStore::show_main_page() {
 }
 
 
-void Management::show_management_page() {
+void Management::show_management_page(UserManager& userManager, string& loggedInUser) {
 
     int option;
 
@@ -237,8 +259,9 @@ void Management::show_management_page() {
         cout << "2. Edit Product" << endl;
         cout <<"3. REmove Product" << endl;
         cout << "4. List of products" << endl;
-        cout << "5. Return to Main Menu" << endl;
-        cout << "6. Exit" << endl;
+        cout << "5. settings" << endl;
+        cout << "6. Return to Main Menu" << endl;
+        cout << "7. Exit" << endl;
         cout << "Enter your option: ";
         cin >> option;
 
@@ -257,8 +280,10 @@ void Management::show_management_page() {
         case 4:
                 list_of_products();
         case 5:
-                return;
+                settings(userManager,loggedInUser);
         case 6:
+                return;
+        case 7:
                 exit(0);
         
         default:
@@ -288,7 +313,7 @@ void ProductStore::management() {
         if (userManager.login(username, password)) {
 
             Management managementPage;
-            managementPage.show_management_page();
+            managementPage.show_management_page(userManager,username);
         } else {
             cout << "Login failed." << endl;
         }
@@ -296,7 +321,7 @@ void ProductStore::management() {
 
         if (userManager.sign_up(username, password)) {
             Management managementPage;
-            managementPage.show_management_page();
+            managementPage.show_management_page(userManager,username);
 
         } else {
             cout << "Sign up failed." << endl;
@@ -360,8 +385,45 @@ void Management::remove_product(){
     product_list.remove_product(i);
 }
 
+void Management::settings(UserManager& userManager,  string& loggedInUser) {
+    int option;
+
+    while (true) {
+        cout << "settings" << endl;
+        cout << "1. Change Password" << endl;
+        cout << "2. Return to Management Menu" << endl;
+        cout << "Enter your option: ";
+        cin >> option;
+
+        switch (option) {
+            case 1:
+                change_pass(userManager,loggedInUser);
+                break;
+            case 2:
+                return;
+            default:
+                cout << "Invalid option, try again." << endl;
+        }
+    }
+}
 
 
+
+void Management::change_pass(UserManager& userManager, string& loggedInUser) {
+    string old_password, new_password;
+
+    cout << "Enter old password: ";
+    cin >> old_password;
+
+    cout << "Enter new password: ";
+    cin >> new_password;
+
+    if (userManager.change_pass(loggedInUser, old_password, new_password)) {
+        cout << "Password changed successfully." << endl;
+    } else {
+        cout << "Failed to change password." << endl;
+    }
+}
 
 
 int main() {
