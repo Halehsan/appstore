@@ -115,7 +115,7 @@ public:
 
 class UserManager{
 public:
-    bool sign_up(string& username, string& password);
+    bool sign_up(string& username, string& password, string&hotkey);
     bool login(string& username, string& password);
     bool change_pass(string& username, string& old_password, string& new_password);
     
@@ -123,8 +123,16 @@ private:
     bool validate_pass(string& password);
 
     vector<User> users;
+    bool check_hotkey(string& hotkey);
+    string valid_hotkey = "appstore1022"; 
+
 
 };
+
+bool UserManager::check_hotkey(string& hotkey) {
+    return hotkey == valid_hotkey;
+}
+
 
 bool UserManager::validate_pass(string& password) {
 
@@ -147,7 +155,13 @@ bool UserManager::validate_pass(string& password) {
     
 
 
-bool UserManager::sign_up(string& username, string& password) {
+bool UserManager::sign_up(string& username, string& password, string& hotkey) {
+    if (!check_hotkey(hotkey)) {
+
+        cout << "Invalid hot key." << endl;
+
+        return false;
+    }
 
     if (!validate_pass(password)) {
         cout << "Password is invalid. It must be at least 8 characters long and include only letters, digits, hyphens, and underscores." << endl;
@@ -163,6 +177,7 @@ bool UserManager::sign_up(string& username, string& password) {
     cout << "Sign up successful!" << endl;
     return true;
 }
+
 
 
 bool UserManager::login(string& username, string& password) {
@@ -341,7 +356,12 @@ void ProductStore::management() {
                 cout << "Login failed." << endl;
             }
         } else if (option == 2) {
-            if (userManager.sign_up(loggedInUser, password)) {
+
+            cout << "Enter hot key: ";
+            string hotkey;
+            cin >> hotkey;
+
+            if (userManager.sign_up(loggedInUser, password, hotkey)) {
                 isUserLoggedIn = true;
                 managementPage.show_management_page(userManager, loggedInUser);
             } else {
@@ -350,11 +370,14 @@ void ProductStore::management() {
         } else {
             cout << "Invalid option, returning to main menu." << endl;
         }
-    } else {
+    } else  {
         managementPage.show_management_page(userManager, loggedInUser);
+        
+        if (loggedInUser.empty()) {
+            isUserLoggedIn = false;
+        }
     }
 }
-
 
 void ProductStore::customer() {
     cout << "Customer section is under development." << endl;
@@ -421,6 +444,8 @@ void Management::settings(UserManager& userManager,  string& loggedInUser) {
         cout << "****************************************" << endl;
         cout << "* 1. Change Password                   *" << endl;
         cout << "* 2. Return to Management Menu         *" << endl;
+        cout << "* 3. Log out                           *" << endl;
+
         cout << "* Enter your option: ";
         cin >> option;
         cout << "****************************************" << endl;
@@ -430,6 +455,10 @@ void Management::settings(UserManager& userManager,  string& loggedInUser) {
                 change_pass(userManager,loggedInUser);
                 break;
             case 2:
+                return;
+            case 3:
+                cout << "You have been logged out." << endl;
+                loggedInUser.clear();                
                 return;
             default:
                 cout << "Invalid option, try again." << endl;
