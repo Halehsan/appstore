@@ -177,17 +177,17 @@ bool UserManager::login(string& username, string& password) {
     return false;
 }
 
-bool UserManager::change_pass(string& username, string& old_password, string& new_password){
-    for (auto& user: users ){
-        if (user.username == username && user.password == old_password)
-            if (!validate_pass(new_password)){
+bool UserManager::change_pass(string& username, string& old_password, string& new_password) {
+    for (auto& user : users) {
+        if (user.username == username && user.password == old_password) {
+            if (!validate_pass(new_password)) {
                 cout << "Password is invalid." << endl;
                 return false;
             }
             user.password = new_password;
             cout << "Password changed successfully." << endl;
             return true;
-
+        }
     }
     cout << "Invalid username or old password." << endl;
     return false;
