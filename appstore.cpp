@@ -48,14 +48,15 @@ void ListOfProducts::list_of_products(){
 
     for (int i =0 ; i < products.size();++i){
 
+        cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ " << endl;
         cout << "Product Number: " << i+1 << endl;
         cout << "Brand: " << products[i].brand_name << endl;
         cout << "Model: " << products[i].model_name << endl;
         cout << "Size: " << products[i].size << endl;
         cout << "Color: " << products[i].color << endl;
-        cout << "Price: " << products[i].price << endl;
+        cout << "Price:   Toman" << products[i].price << endl;
         cout << "Quantity: " << products[i].quantity << endl;
-        cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/* " << endl;
+        cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ " << endl;
 
 
     }
@@ -84,26 +85,24 @@ void ListOfProducts::edit_product(int i){
     Product& product = products[i - 1];
 
     cout << "Editing product number " << i << endl;
-
-    cout << "Enter new brand name: " << product.brand_name << endl;
+    cout << "Enter new brand name: ";
     cin.ignore();
-    getline(cin, product.brand_name);
 
-    cout << "Enter new model name: " << product.model_name << endl;
+    getline(cin, product.brand_name);
+    cout << "Enter new model name: ";
     getline(cin, product.model_name);
 
-    cout << "Enter new size: " << product.size << endl;
+    cout << "Enter new size: ";
     getline(cin, product.size);
 
-    cout << "Enter new color: " << product.color << endl;
+    cout << "Enter new color: ";
     getline(cin, product.color);
 
-    cout << "Enter new quantity: " << product.quantity << endl;
+    cout << "Enter new quantity: ";
     cin >> product.quantity;
 
-    cout << "Enter new price: "<< product.price << endl;
+    cout << "Enter new price: ";
     cin >> product.price;
-
     cout << "Product edited successfully." << endl;
 }
 
@@ -150,20 +149,21 @@ bool UserManager::validate_pass(string& password) {
 
 bool UserManager::sign_up(string& username, string& password) {
 
-        if (!validate_pass(password)) {
+    if (!validate_pass(password)) {
         cout << "Password is invalid. It must be at least 8 characters long and include only letters, digits, hyphens, and underscores." << endl;
 
         return false;
     }
 
 
-        User newUser;
-        newUser.username = username;
-        newUser.password = password;
-        users.push_back(newUser);
-        cout << "Sign up successful!" << endl;
-        return true;
+    User newUser;
+    newUser.username = username;
+    newUser.password = password;
+    users.push_back(newUser);
+    cout << "Sign up successful!" << endl;
+    return true;
 }
+
 
 bool UserManager::login(string& username, string& password) {
     for (auto& user : users) {
@@ -176,6 +176,7 @@ bool UserManager::login(string& username, string& password) {
     cout << "Invalid username or password. Try again." << endl;
     return false;
 }
+
 
 bool UserManager::change_pass(string& username, string& old_password, string& new_password) {
     for (auto& user : users) {
@@ -193,16 +194,6 @@ bool UserManager::change_pass(string& username, string& old_password, string& ne
     return false;
 }
 
-class ProductStore {
-public:
-
-    void show_main_page();
-    void management();
-    void customer();
-private:
-
-    UserManager userManager;
-};
 
 
 class Management {
@@ -221,15 +212,36 @@ private:
     ListOfProducts product_list;
 };
 
+
+class ProductStore {
+public:
+
+    void show_main_page();
+    void management();
+    void customer();
+
+private:
+
+    UserManager userManager;
+    string loggedInUser;
+    bool isUserLoggedIn = false;
+    Management managementPage;
+};
+
 void ProductStore::show_main_page() {
     int option;
 
     while (true) {
-        cout << "1. Management" << endl;
-        cout << "2. Customer" << endl;
-        cout << "3. Exit" << endl;
-        cout << "Enter your option: ";
+        cout << "****************************************" << endl;
+        cout << "*              Main Menu               *" << endl;
+        cout << "****************************************" << endl;
+        cout << "****************************************" << endl;
+        cout << "*  1. Management                       *" << endl;
+        cout << "*  2. Customer                         *" << endl;
+        cout << "*  3. Exit                             *" << endl;
+        cout << "* Enter your option: ";
         cin >> option;
+        cout << "****************************************" << endl;
 
         switch (option) {
             case 1:
@@ -254,16 +266,20 @@ void Management::show_management_page(UserManager& userManager, string& loggedIn
 
     while (true){
 
-        cout << "Management Section" << endl;
-        cout << "1. Add Product" << endl;
-        cout << "2. Edit Product" << endl;
-        cout <<"3. REmove Product" << endl;
-        cout << "4. List of products" << endl;
-        cout << "5. settings" << endl;
-        cout << "6. Return to Main Menu" << endl;
-        cout << "7. Exit" << endl;
-        cout << "Enter your option: ";
+        cout << "****************************************" << endl;
+        cout << "*           Management Menu            *" << endl;
+        cout << "****************************************" << endl;
+        cout << "****************************************" << endl;
+        cout << "*  1. Add Product                      *" << endl;
+        cout << "*  2. Edit Product                     *" << endl;
+        cout << "*  3. Remove Product                   *" << endl;
+        cout << "*  4. List of Products                 *" << endl;
+        cout << "*  5. Settings                         *" << endl;
+        cout << "*  6. Return to Main Menu              *" << endl;
+        cout << "*  7. Exit                             *" << endl;
+        cout << "* Enter your option: ";
         cin >> option;
+        cout << "****************************************" << endl;
 
         switch (option)
         {
@@ -294,42 +310,51 @@ void Management::show_management_page(UserManager& userManager, string& loggedIn
 }
 
 
+
 void ProductStore::management() {
-    string username, password;
     int option;
+    
+    if (!isUserLoggedIn) {
 
-    cout << "1. Login" << endl;
-    cout << "2. Sign Up" << endl;
-    cout << "Enter your option: ";
-    cin >> option;
+        cout << "****************************************" << endl;
+        cout << "*           Management Login           *" << endl;
+        cout << "****************************************" << endl;
+        cout << "****************************************" << endl;
+        cout << "* 1. Login                             *" << endl;
+        cout << "* 2. Sign Up                           *" << endl;
+        cout << "* Enter your option: ";
+        cin >> option;
+        cout << "****************************************" << endl;
 
-    cout << "Enter username: ";
-    cin >> username;
-    cout << "Enter password: ";
-    cin >> password;
+        cout << "Enter username: ";
+        cin >> loggedInUser;
+        cout << "Enter password: ";
 
-    if (option == 1) {
+        string password;
+        cin >> password;
 
-        if (userManager.login(username, password)) {
-
-            Management managementPage;
-            managementPage.show_management_page(userManager,username);
+        if (option == 1) {
+            if (userManager.login(loggedInUser, password)) {
+                isUserLoggedIn = true;
+                managementPage.show_management_page(userManager, loggedInUser);
+            } else {
+                cout << "Login failed." << endl;
+            }
+        } else if (option == 2) {
+            if (userManager.sign_up(loggedInUser, password)) {
+                isUserLoggedIn = true;
+                managementPage.show_management_page(userManager, loggedInUser);
+            } else {
+                cout << "Sign up failed." << endl;
+            }
         } else {
-            cout << "Login failed." << endl;
-        }
-    } else if (option == 2) {
-
-        if (userManager.sign_up(username, password)) {
-            Management managementPage;
-            managementPage.show_management_page(userManager,username);
-
-        } else {
-            cout << "Sign up failed." << endl;
+            cout << "Invalid option, returning to main menu." << endl;
         }
     } else {
-        cout << "Invalid option, returning to main menu." << endl;
+        managementPage.show_management_page(userManager, loggedInUser);
     }
 }
+
 
 void ProductStore::customer() {
     cout << "Customer section is under development." << endl;
@@ -356,7 +381,7 @@ void Management::add_product(){
     cout <<  "Enter the quantity:" ;
     cin >> product.quantity;
 
-    cout <<  "Enter the price::" ;
+    cout <<  "Enter the price:" ;
     cin >> product.price;
 
     product_list.add_product(product);
@@ -389,11 +414,16 @@ void Management::settings(UserManager& userManager,  string& loggedInUser) {
     int option;
 
     while (true) {
-        cout << "settings" << endl;
-        cout << "1. Change Password" << endl;
-        cout << "2. Return to Management Menu" << endl;
-        cout << "Enter your option: ";
+
+        cout << "****************************************" << endl;
+        cout << "*             Settings Menu            *" << endl;
+        cout << "****************************************" << endl;
+        cout << "****************************************" << endl;
+        cout << "* 1. Change Password                   *" << endl;
+        cout << "* 2. Return to Management Menu         *" << endl;
+        cout << "* Enter your option: ";
         cin >> option;
+        cout << "****************************************" << endl;
 
         switch (option) {
             case 1:
