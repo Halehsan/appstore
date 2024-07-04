@@ -105,12 +105,84 @@ void ListOfProducts::edit_product(int i){
     cout << "Product edited successfully." << endl;
 }
 
+
+class User {
+public:
+    string username;
+    string password;
+};
+
+class UserManager{
+public:
+    bool sign_up(string& username, string& password);
+    bool login(string& username, string& password);
+    
+private:
+    bool validate_pass(string& password);
+
+    vector<User> users;
+
+};
+
+bool UserManager::validate_pass(string& password) {
+
+    if (password.length() < 8) {
+        return false;
+    }
+    for (char ch : password) {
+
+        if (!((ch >= 'A' && ch <= 'Z') ||
+              (ch >= 'a' && ch <= 'z') || 
+              (ch >= '0' && ch <= '9') || 
+               ch == '-' ||                 
+               ch == '_')) {                
+
+            return false;
+        }
+    }
+    return true;
+}
+    
+
+
+bool UserManager::sign_up(string& username, string& password) {
+
+        if (!validate_pass(password)) {
+        cout << "Password is invalid. It must be at least 8 characters long and include only letters, digits, hyphens, and underscores." << endl;
+
+        return false;
+    }
+
+
+        User newUser;
+        newUser.username = username;
+        newUser.password = password;
+        users.push_back(newUser);
+        cout << "Sign up successful!" << endl;
+        return true;
+}
+
+bool UserManager::login(string& username, string& password) {
+    for (auto& user : users) {
+
+        if (user.username == username && user.password == password) {
+            cout << "Login successful." << endl;
+            return true;
+        }
+    }
+    cout << "Invalid username or password. Try again." << endl;
+    return false;
+}
+
 class ProductStore {
 public:
 
     void show_main_page();
     void management();
     void customer();
+private:
+
+    UserManager userManager;
 };
 
 
@@ -198,8 +270,40 @@ void Management::show_management_page() {
 
 
 void ProductStore::management() {
-    Management managementPage;
-    managementPage.show_management_page();
+    string username, password;
+    int option;
+
+    cout << "1. Login" << endl;
+    cout << "2. Sign Up" << endl;
+    cout << "Enter your option: ";
+    cin >> option;
+
+    cout << "Enter username: ";
+    cin >> username;
+    cout << "Enter password: ";
+    cin >> password;
+
+    if (option == 1) {
+
+        if (userManager.login(username, password)) {
+
+            Management managementPage;
+            managementPage.show_management_page();
+        } else {
+            cout << "Login failed." << endl;
+        }
+    } else if (option == 2) {
+
+        if (userManager.sign_up(username, password)) {
+            Management managementPage;
+            managementPage.show_management_page();
+
+        } else {
+            cout << "Sign up failed." << endl;
+        }
+    } else {
+        cout << "Invalid option, returning to main menu." << endl;
+    }
 }
 
 void ProductStore::customer() {
