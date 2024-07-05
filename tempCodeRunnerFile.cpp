@@ -213,12 +213,12 @@ bool UserManager::change_pass(string& username, string& old_password, string& ne
 
 class Management {
 public:
-    void show_management_page(UserManager& userManager, string& loggedInUser, bool& isUserLoggedIn );
+    void show_management_page(UserManager& userManager, string& loggedInUser);
     void add_product();
     void edit_product();
     void remove_product();
     void list_of_products() ;
-    void settings(UserManager& userManager, string& loggedInUser, bool& isUserLoggedIn);
+    void settings(UserManager& userManager, string& loggedInUser);
     void change_pass(UserManager& userManager,  string& loggedInUser);
 
 
@@ -275,7 +275,7 @@ void ProductStore::show_main_page() {
 }
 
 
-void Management::show_management_page(UserManager& userManager, string& loggedInUser,bool& isUserLoggedIn) {
+void Management::show_management_page(UserManager& userManager, string& loggedInUser) {
 
     int option;
 
@@ -311,9 +311,7 @@ void Management::show_management_page(UserManager& userManager, string& loggedIn
         case 4:
                 list_of_products();
         case 5:
-                settings(userManager,loggedInUser,isUserLoggedIn);
-                if (!isUserLoggedIn) return;
-                break;
+                settings(userManager,loggedInUser);
         case 6:
                 return;
         case 7:
@@ -353,7 +351,7 @@ void ProductStore::management() {
         if (option == 1) {
             if (userManager.login(loggedInUser, password)) {
                 isUserLoggedIn = true;
-                managementPage.show_management_page(userManager, loggedInUser,isUserLoggedIn);
+                managementPage.show_management_page(userManager, loggedInUser);
             } else {
                 cout << "Login failed." << endl;
             }
@@ -365,7 +363,7 @@ void ProductStore::management() {
 
             if (userManager.sign_up(loggedInUser, password, hotkey)) {
                 isUserLoggedIn = true;
-                managementPage.show_management_page(userManager, loggedInUser,isUserLoggedIn);
+                managementPage.show_management_page(userManager, loggedInUser);
             } else {
                 cout << "Sign up failed." << endl;
             }
@@ -373,11 +371,11 @@ void ProductStore::management() {
             cout << "Invalid option, returning to main menu." << endl;
         }
     } else  {
-        managementPage.show_management_page(userManager,loggedInUser,isUserLoggedIn );
-        // isUserLoggedIn = false;
-        // if (loggedInUser.empty()) {
-        //     isUserLoggedIn = false;
-        // }
+        managementPage.show_management_page(userManager, loggedInUser);
+        
+        if (loggedInUser.empty()) {
+            isUserLoggedIn = false;
+        }
     }
 }
 
@@ -435,7 +433,7 @@ void Management::remove_product(){
     product_list.remove_product(i);
 }
 
-void Management::settings(UserManager& userManager, string& loggedInUser,bool& isUserLoggedIn) {
+void Management::settings(UserManager& userManager,  string& loggedInUser) {
     int option;
 
     while (true) {
@@ -460,7 +458,7 @@ void Management::settings(UserManager& userManager, string& loggedInUser,bool& i
                 return;
             case 3:
                 cout << "You have been logged out." << endl;
-                isUserLoggedIn = false;                
+                loggedInUser.clear();                
                 return;
             default:
                 cout << "Invalid option, try again." << endl;
