@@ -6,11 +6,9 @@ using namespace std;
 
 
 void clear_screen() {
-    #ifdef _WIN32
-        std::system("cls");
-    #else
-        std::system("clear");
-    #endif
+
+    std::system("cls");
+
 }
 
 
@@ -47,35 +45,6 @@ void ListOfProducts::add_product(Product& product){
 }
 
 
-// void ListOfProducts::list_of_products(){
-
-//     if (products.size()==0){
-
-//         cout << "No products available." << endl;
-//         cin.ignore();
-//         cin.get();
-//         return;
-    
-//     }
-
-//     for (int i =0 ; i < products.size();++i){
-
-//         cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ " << endl;
-//         cout << "Product Number: " << i+1 << endl;
-//         cout << "Brand: " << products[i].brand_name << endl;
-//         cout << "Model: " << products[i].model_name << endl;
-//         cout << "Size: " << products[i].size << endl;
-//         cout << "Color: " << products[i].color << endl;
-//         cout << "Price: " << products[i].price << " Toman" << endl;
-//         cout << "Quantity: " << products[i].quantity << endl;
-//         cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ " << endl;
-//         cin.ignore();
-//         cin.get();
-        
-
-
-//     }
-// }
 
 void ListOfProducts::list_of_products() {
     while (true) {
@@ -437,58 +406,95 @@ void Management::show_management_page(UserManager& userManager, string& loggedIn
 
 void ProductStore::management() {
     int option;
-    
-    if (!isUserLoggedIn) {
 
-        clear_screen();
+    while (true) {
+        if (!isUserLoggedIn) {
+            clear_screen();
 
+            cout << "****************************************" << endl;
+            cout << "*           Management Login           *" << endl;
+            cout << "****************************************" << endl;
+            cout << "****************************************" << endl;
+            cout << "* 1. Login                             *" << endl;
+            cout << "* 2. Sign Up                           *" << endl;
+            cout << "* 3. Return to Main Menu               *" << endl; // New option to return to the main menu
+            cout << "* Enter your option: ";
+            cin >> option;
+            cout << "****************************************" << endl;
 
-        cout << "****************************************" << endl;
-        cout << "*           Management Login           *" << endl;
-        cout << "****************************************" << endl;
-        cout << "****************************************" << endl;
-        cout << "* 1. Login                             *" << endl;
-        cout << "* 2. Sign Up                           *" << endl;
-        cout << "* Enter your option: ";
-        cin >> option;
-        cout << "****************************************" << endl;
-
-        cout << "Enter username: ";
-        cin >> loggedInUser;
-        cout << "Enter password: ";
-
-        string password;
-        cin >> password;
-
-        if (option == 1) {
-            if (userManager.login(loggedInUser, password)) {
-                isUserLoggedIn = true;
-                managementPage.show_management_page(userManager, loggedInUser,isUserLoggedIn);
-            } else {
-                cout << "Login failed." << endl;
+            if (option == 3) {
+                return; // Return to the main menu
             }
-        } else if (option == 2) {
 
-            cout << "Enter hot key: ";
-            string hotkey;
-            cin >> hotkey;
+            while (true) {
+                clear_screen();
 
-            if (userManager.sign_up(loggedInUser, password, hotkey)) {
-                isUserLoggedIn = true;
-                managementPage.show_management_page(userManager, loggedInUser,isUserLoggedIn);
-            } else {
-                cout << "Sign up failed." << endl;
+                cout << "****************************************" << endl;
+                if (option == 1) {
+                    cout << "*             Login Page               *" << endl;
+                } else if (option == 2) {
+                    cout << "*             Sign Up Page             *" << endl;
+                }
+                cout << "****************************************" << endl;
+                cout << "* 1. Continue                          *" << endl; 
+                cout << "* 2. Return to Previous Menu           *" << endl;
+                cout << "* Enter your option: ";
+                int sub_option;
+                cin >> sub_option;
+                cout << "****************************************" << endl;
+
+                if (sub_option == 2) {
+                    break; 
+                }
+
+                if (sub_option == 1) {
+                    string username, password, hotkey; 
+                    cout << "Enter username: ";
+                    cin >> username;
+                    cout << "Enter password: ";
+                    cin >> password;
+
+                    if (option == 1) { 
+                        if (userManager.login(username, password)) {
+                            loggedInUser = username;
+                            isUserLoggedIn = true;
+                            managementPage.show_management_page(userManager, loggedInUser, isUserLoggedIn);
+                        } else {
+                            cout << "Login failed." << endl;
+                            cin.ignore();
+                            cin.get();
+                        }
+                    } else if (option == 2) { 
+                        cout << "Enter hot key: ";
+                        cin >> hotkey;
+
+                        if (userManager.sign_up(username, password, hotkey)) {
+                            loggedInUser = username;
+                            isUserLoggedIn = true;
+                            managementPage.show_management_page(userManager, loggedInUser, isUserLoggedIn);
+                        } else {
+                            cout << "Sign up failed." << endl;
+                            cin.ignore();
+                            cin.get();
+                        }
+                    } else {
+                        cout << "Invalid option, returning to main menu." << endl;
+                        break;
+                    }
+                } else {
+                    cout << "Invalid option, try again." << endl;
+                    cin.ignore();
+                    cin.get();
+                }
             }
         } else {
-            cout << "Invalid option, returning to main menu." << endl;
+            managementPage.show_management_page(userManager, loggedInUser, isUserLoggedIn);
+            cin.ignore();
+            cin.get();
         }
-    } else  {
-        managementPage.show_management_page(userManager,loggedInUser,isUserLoggedIn );
-        cin.ignore();
-        cin.get();
-
     }
 }
+
 
 void ProductStore::customer() {
     cout << "Customer section is under development." << endl;
