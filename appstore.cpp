@@ -2,13 +2,23 @@
 using namespace std;
 #include <string>
 #include <vector>
+#include <cstdlib> 
+
+
+void clear_screen() {
+    #ifdef _WIN32
+        std::system("cls");
+    #else
+        std::system("clear");
+    #endif
+}
 
 
 class Product {
 public:
     string brand_name;
     string model_name;
-    string size;
+    int size;
     string color;
     double price;
     int quantity;
@@ -37,30 +47,98 @@ void ListOfProducts::add_product(Product& product){
 }
 
 
-void ListOfProducts::list_of_products(){
+// void ListOfProducts::list_of_products(){
 
-    if (products.size()==0){
+//     if (products.size()==0){
 
-        cout << "No products available." << endl;
-        return;
+//         cout << "No products available." << endl;
+//         cin.ignore();
+//         cin.get();
+//         return;
     
-    }
+//     }
 
-    for (int i =0 ; i < products.size();++i){
+//     for (int i =0 ; i < products.size();++i){
 
-        cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ " << endl;
-        cout << "Product Number: " << i+1 << endl;
-        cout << "Brand: " << products[i].brand_name << endl;
-        cout << "Model: " << products[i].model_name << endl;
-        cout << "Size: " << products[i].size << endl;
-        cout << "Color: " << products[i].color << endl;
-        cout << "Price:   Toman" << products[i].price << endl;
-        cout << "Quantity: " << products[i].quantity << endl;
-        cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ " << endl;
+//         cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ " << endl;
+//         cout << "Product Number: " << i+1 << endl;
+//         cout << "Brand: " << products[i].brand_name << endl;
+//         cout << "Model: " << products[i].model_name << endl;
+//         cout << "Size: " << products[i].size << endl;
+//         cout << "Color: " << products[i].color << endl;
+//         cout << "Price: " << products[i].price << " Toman" << endl;
+//         cout << "Quantity: " << products[i].quantity << endl;
+//         cout << "*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ " << endl;
+//         cin.ignore();
+//         cin.get();
+        
 
 
+//     }
+// }
+
+void ListOfProducts::list_of_products() {
+    while (true) {
+        clear_screen();
+
+        if (products.empty()) {
+            cout << "No products available." << endl;
+            cin.ignore();
+            cin.get();
+            return;
+        }
+
+        cout << "Available Products:" << endl;
+        for (int i = 0; i < products.size(); ++i) {
+            cout << i + 1 << ". " << products[i].brand_name << " - " << products[i].model_name << endl;
+        }
+        cout << "0. Return to Management Menu" << endl;
+
+        cout << "\nEnter the product number to view details or 0 to return: ";
+        int choice;
+        cin >> choice;
+
+        if (choice == 0) {
+            return;
+        }
+
+        if (choice > 0 && choice <= products.size()) {
+            while (true) {
+                clear_screen();
+
+                cout << "Product Number: " << choice << endl;
+                cout << "Brand: " << products[choice - 1].brand_name << endl;
+                cout << "Model: " << products[choice - 1].model_name << endl;
+                cout << "Size: " << products[choice - 1].size << endl;
+                cout << "Color: " << products[choice - 1].color << endl;
+                cout << "Price: " << products[choice - 1].price << " Toman" << endl;
+                cout << "Quantity: " << products[choice - 1].quantity << endl;
+
+                cout << "\n1. Return to List of Products" << endl;
+                cout << "2. Return to Management Menu" << endl;
+                cout << "Enter your option: ";
+                int detail_choice;
+                cin >> detail_choice;
+
+                if (detail_choice == 1) {
+                    break;
+                } else if (detail_choice == 2) {
+                    return;
+                } else {
+                    cout << "Invalid option, try again." << endl;
+                    cin.ignore();
+                    cin.get();
+                }
+            }
+        } else {
+            cout << "Invalid option, try again." << endl;
+            cin.ignore();
+            cin.get();
+        }
     }
 }
+
+
 
 
 
@@ -70,14 +148,13 @@ void ListOfProducts::remove_product(int i){
         cout << "Invalid product number." << endl;
         return;
     }
-    products.erase(products.begin() + (i - 1));
+    products.erase(products.begin() + (i - 1));        /////////////////////////
 
     cout << "Product removed successfully." << endl;
 }
 
-void ListOfProducts::edit_product(int i){
+void ListOfProducts::edit_product(int i) {
     if (i < 1 || i > products.size()) {
-
         cout << "Invalid product number." << endl;
         return;
     }
@@ -93,7 +170,7 @@ void ListOfProducts::edit_product(int i){
     getline(cin, product.model_name);
 
     cout << "Enter new size: ";
-    getline(cin, product.size);
+    cin >> product.size;
 
     cout << "Enter new color: ";
     getline(cin, product.color);
@@ -121,10 +198,11 @@ public:
     
 private:
     bool validate_pass(string& password);
+    bool validate_username(string& username);
 
     vector<User> users;
     bool check_hotkey(string& hotkey);
-    string valid_hotkey = "appstore1022"; 
+    string valid_hotkey = "123"; 
 
 
 };
@@ -153,6 +231,22 @@ bool UserManager::validate_pass(string& password) {
     return true;
 }
     
+bool UserManager::validate_username(string& username) {
+    if (username.length() < 8) {
+        return false;
+    }
+    for (char ch : username) {
+        if (!((ch >= 'A' && ch <= 'Z') ||
+              (ch >= 'a' && ch <= 'z') || 
+              (ch >= '0' && ch <= '9') || 
+               ch == '-' ||                 
+               ch == '_')) {                
+            return false;
+        }
+    }
+    return true;
+}
+
 
 
 bool UserManager::sign_up(string& username, string& password, string& hotkey) {
@@ -160,6 +254,11 @@ bool UserManager::sign_up(string& username, string& password, string& hotkey) {
 
         cout << "Invalid hot key." << endl;
 
+        return false;
+    }
+
+    if (!validate_username(username)) {
+        cout << "Username is invalid. It must be at least 8 characters long and include only letters, digits, hyphens, and underscores." << endl;
         return false;
     }
 
@@ -247,6 +346,7 @@ void ProductStore::show_main_page() {
     int option;
 
     while (true) {
+        clear_screen();
         cout << "****************************************" << endl;
         cout << "*              Main Menu               *" << endl;
         cout << "****************************************" << endl;
@@ -270,6 +370,8 @@ void ProductStore::show_main_page() {
                 return;
             default:
                 cout << "Invalid option, please try again." << endl;
+                cin.ignore();
+                cin.get();
         }
     }
 }
@@ -280,6 +382,8 @@ void Management::show_management_page(UserManager& userManager, string& loggedIn
     int option;
 
     while (true){
+
+        clear_screen();
 
         cout << "****************************************" << endl;
         cout << "*           Management Menu            *" << endl;
@@ -310,6 +414,7 @@ void Management::show_management_page(UserManager& userManager, string& loggedIn
                 break;
         case 4:
                 list_of_products();
+                break;
         case 5:
                 settings(userManager,loggedInUser,isUserLoggedIn);
                 if (!isUserLoggedIn) return;
@@ -321,6 +426,8 @@ void Management::show_management_page(UserManager& userManager, string& loggedIn
         
         default:
             cout << "Invalid option, try again." << endl;
+            cin.ignore();
+            cin.get();
         }
     
     }
@@ -332,6 +439,9 @@ void ProductStore::management() {
     int option;
     
     if (!isUserLoggedIn) {
+
+        clear_screen();
+
 
         cout << "****************************************" << endl;
         cout << "*           Management Login           *" << endl;
@@ -374,10 +484,9 @@ void ProductStore::management() {
         }
     } else  {
         managementPage.show_management_page(userManager,loggedInUser,isUserLoggedIn );
-        // isUserLoggedIn = false;
-        // if (loggedInUser.empty()) {
-        //     isUserLoggedIn = false;
-        // }
+        cin.ignore();
+        cin.get();
+
     }
 }
 
@@ -387,6 +496,8 @@ void ProductStore::customer() {
 
 
 void Management::add_product(){
+    clear_screen();
+
     Product product;
 
 
@@ -398,7 +509,9 @@ void Management::add_product(){
     getline(cin, product.model_name);
 
     cout <<  "Enter the size:" ;
-    getline(cin, product.size);
+    cin >> product.size;
+    cin.ignore();
+    
 
     cout <<  "Enter the color:" ;
     getline(cin, product.color);
@@ -413,32 +526,45 @@ void Management::add_product(){
 
 
     cout << "Product added successfully" <<endl;
+    cin.ignore();
+    cin.get();
 
 }
 
 void Management::list_of_products() {
 
+    clear_screen();
+
     product_list.list_of_products();
 }
 
 void Management::edit_product(){
+    clear_screen();
+
     int i;
     cout << "Enter the product number to edit: ";
     cin >> i;
     product_list.edit_product(i);
+    cin.ignore();
+    cin.get();
 }
 
 void Management::remove_product(){
+    clear_screen();
+
     int i;
     cout << "Enter the product number to remove: ";
     cin >> i;
     product_list.remove_product(i);
+    cin.ignore();
+    cin.get();
 }
 
 void Management::settings(UserManager& userManager, string& loggedInUser,bool& isUserLoggedIn) {
     int option;
 
     while (true) {
+        clear_screen();
 
         cout << "****************************************" << endl;
         cout << "*             Settings Menu            *" << endl;
@@ -464,6 +590,8 @@ void Management::settings(UserManager& userManager, string& loggedInUser,bool& i
                 return;
             default:
                 cout << "Invalid option, try again." << endl;
+                cin.ignore();
+                cin.get();
         }
     }
 }
@@ -471,6 +599,8 @@ void Management::settings(UserManager& userManager, string& loggedInUser,bool& i
 
 
 void Management::change_pass(UserManager& userManager, string& loggedInUser) {
+    clear_screen();
+
     string old_password, new_password;
 
     cout << "Enter old password: ";
@@ -484,6 +614,8 @@ void Management::change_pass(UserManager& userManager, string& loggedInUser) {
     } else {
         cout << "Failed to change password." << endl;
     }
+    cin.ignore();
+    cin.get();
 }
 
 
