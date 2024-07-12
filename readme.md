@@ -29,4 +29,4 @@ This Application is a simple command-line application written in C++ for managin
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/Halehsan/appstore/tree/master
+   git clone https://github.com/Halehsan/appstore
